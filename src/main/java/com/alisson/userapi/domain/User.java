@@ -1,13 +1,12 @@
 package com.alisson.userapi.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
+@Table( name = "tb_user")
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -70,5 +69,15 @@ public class User implements Serializable {
         this.userPassword = userPassword;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserEmail(), user.getUserEmail()) && Objects.equals(getUserLogin(), user.getUserLogin());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserEmail(), getUserLogin());
+    }
 }
