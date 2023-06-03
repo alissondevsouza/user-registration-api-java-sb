@@ -27,4 +27,28 @@ public class UserService {
 
         return userRepository.findAll();
     }
+
+    public User create(User user) {
+        User newUser = new User(
+                null, user.getUserName(), user.getUserEmail(), user.getUserLogin(), user.getUserPassword()
+        );
+
+        return userRepository.save(newUser);
+    }
+
+    public User update (Long id, User user) {
+        User oldUser = findById(id);
+
+        oldUser.setUserEmail(user.getUserEmail());
+        oldUser.setUserLogin(user.getUserLogin());
+        oldUser.setUserName(user.getUserName());
+        oldUser.setUserPassword(user.getUserPassword());
+
+        return userRepository.save(oldUser);
+    }
+
+    public void delete (Long id) {
+
+        userRepository.deleteById(id);
+    }
 }

@@ -1,0 +1,9 @@
+Proximas Implementações:
+
+- DTO's
+- Exceções
+- Readme
+- Actuator
+- Swager
+- JWT
+- Profiles
