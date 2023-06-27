@@ -1,6 +1,7 @@
 package com.alisson.userapi.Controllers;
 
 import com.alisson.userapi.Services.UserService;
+import com.alisson.userapi.domain.Dtos.UserDto;
 import com.alisson.userapi.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -19,26 +21,28 @@ public class UserController {
     private UserService userService;
 
     @GetMapping (value = "/{id}")
-    public ResponseEntity <User> finById(@PathVariable Long id ) {
-        User user = userService.findById(id);
+    public ResponseEntity <UserDto> finById(@PathVariable Long id ) {
+        UserDto userDto = new UserDto(userService.findById(id));
 
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @GetMapping
-    public ResponseEntity <List<User>> findAll() {
-        List<User> listUsers = userService.findAll();
+    public ResponseEntity <List<UserDto>> findAll() {
+        List<UserDto> listUsersDto = userService.findAll().stream().map( user ->
+                new UserDto(user)).collect(Collectors.toList());
 
-        return ResponseEntity.ok().body(listUsers);
+        return ResponseEntity.ok().body(listUsersDto);
     }
 
     @PostMapping
-    public ResponseEntity <User> create (@RequestBody User user) {
-        User newUser = userService.create(user);
+    public ResponseEntity <UserDto> create (@RequestBody User user) {
+        UserDto newUser = userService.create(user);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUser.getId()).toUri();
 
-        return ResponseEntity.created(uri).build();
+        //return ResponseEntity.created(uri).build();
+        return ResponseEntity.ok().body(newUser);
     }
 
     @PutMapping(value = "/{id}")
