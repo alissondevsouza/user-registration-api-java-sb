@@ -1,6 +1,5 @@
 Proximas Implementações:
 
-- DTO's
 - Exceções
 - Readme
 - Actuator

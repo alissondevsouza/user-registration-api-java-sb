@@ -2,12 +2,14 @@ package com.alisson.userapi.domain;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table( name = "tb_user")
 public class User implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,46 +31,53 @@ public class User implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public User(User update) {
-    }
-
     public Long getId() {
+
         return id;
     }
 
     public void setId(Long id) {
+
         this.id = id;
     }
 
     public String getUserName() {
+
         return userName;
     }
 
     public void setUserName(String userName) {
+
         this.userName = userName;
     }
 
     public String getUserEmail() {
+
         return userEmail;
     }
 
     public void setUserEmail(String userEmail) {
+
         this.userEmail = userEmail;
     }
 
     public String getUserLogin() {
+
         return userLogin;
     }
 
     public void setUserLogin(String userLogin) {
+
         this.userLogin = userLogin;
     }
 
     public String getUserPassword() {
+
         return userPassword;
     }
 
     public void setUserPassword(String userPassword) {
+
         this.userPassword = userPassword;
     }
 
@@ -81,6 +90,7 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(getId(), getUserEmail(), getUserLogin());
     }
 }

@@ -2,16 +2,17 @@ package com.alisson.userapi.domain.Dtos;
 
 import com.alisson.userapi.domain.User;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class UserDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private String userName;
     private String userEmail;
     private String userLogin;
-    private String userPassword;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -21,10 +22,12 @@ public class UserDto implements Serializable {
     }
 
     public Long getId() {
+
         return id;
     }
 
     public void setId(Long id) {
+
         this.id = id;
     }
 

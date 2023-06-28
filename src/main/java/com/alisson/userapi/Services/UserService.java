@@ -22,7 +22,6 @@ public class UserService {
 
        return user.orElseThrow( () -> new ObjectNotFoundException(
                "Objeto não encontradp! Id: ", user ));
-
     }
 
     public List <User> findAll() {
@@ -50,7 +49,7 @@ public class UserService {
         return new UserDto(userRepository.save(newUser));
     }
 
-    public User update (Long id, User user) {
+    public UserDto update (Long id, User user) {
         User oldUser = findById(id);
 
         oldUser.setUserEmail(user.getUserEmail());
@@ -58,7 +57,7 @@ public class UserService {
         oldUser.setUserName(user.getUserName());
         oldUser.setUserPassword(user.getUserPassword());
 
-        return userRepository.save(oldUser);
+        return new UserDto(userRepository.save(oldUser));
     }
 
     public void delete (Long id) {

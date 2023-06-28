@@ -41,15 +41,14 @@ public class UserController {
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUser.getId()).toUri();
 
-        //return ResponseEntity.created(uri).build();
-        return ResponseEntity.ok().body(newUser);
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity <User> update(@PathVariable Long id, @RequestBody User user) {
-        User newUser = new User(userService.update(id, user));
+    public ResponseEntity <UserDto> update(@PathVariable Long id, @RequestBody User user) {
+        UserDto newUserDto = userService.update(id, user);
 
-        return ResponseEntity.ok().body(newUser);
+        return ResponseEntity.ok().body(newUserDto);
     }
 
    @DeleteMapping(value = "/{id}")
