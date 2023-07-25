@@ -2,12 +2,9 @@ package com.alisson.userapi.controller;
 
 import com.alisson.userapi.domain.Dtos.AuthenticationDto;
 import com.alisson.userapi.domain.Dtos.LoginResponseDto;
-import com.alisson.userapi.domain.entity.User;
-import com.alisson.userapi.service.TokenService;
+import com.alisson.userapi.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,18 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private TokenService tokenService;
+    private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthenticationDto authenticationDto){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDto.userLogin(), authenticationDto.userPassword());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) {
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        return ResponseEntity.ok(new LoginResponseDto(authenticationService.login(authenticationDto)));
     }
 }

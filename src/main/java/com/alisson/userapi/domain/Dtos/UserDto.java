@@ -25,10 +25,12 @@ public class UserDto implements Serializable {
     }
 
     public UserRole getRole() {
+
         return role;
     }
 
     public void setRole(UserRole role) {
+
         this.role = role;
     }
 

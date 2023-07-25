@@ -19,42 +19,41 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User findById( Long id ) {
-       Optional <User> user = userRepository.findById(id);
+    public User findById(Long id) {
 
-       return user.orElseThrow( () -> new ObjectNotFoundException(
-               "Objeto não encontradp! Id: ", user ));
+        Optional<User> user = userRepository.findById(id);
+
+        return user.orElseThrow(() -> new ObjectNotFoundException(
+                "User " + id + " not found! Id: ", user));
     }
 
-    public List <User> findAll() {
+    public List<User> findAll() {
 
         return userRepository.findAll();
     }
 
     public UserDto create(User user) {
+
         if (findByUserName(user) != null) {
-            throw new DataIntegrityViolationException("Username ja cadastrado");
+            throw new DataIntegrityViolationException("UserName already registered!");
         }
 
         if (findByUserEmail(user) != null) {
-            throw new DataIntegrityViolationException("Email ja cadastrado");
+            throw new DataIntegrityViolationException("Email already registered!");
         }
 
         if (findByUserLogin(user) != null) {
-            throw new DataIntegrityViolationException("Login Name ja cadastrado");
+            throw new DataIntegrityViolationException("UserLogin already registered");
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
-
-        User newUser = new User(
-                null, user.getUserName(), user.getUserEmail(), user.getUserLogin(), encryptedPassword, user.getRole()
-        );
-
-        return new UserDto(userRepository.save(newUser));
+        return new UserDto(userRepository.save(new User(
+                null, user.getUserName(), user.getUserEmail(), user.getUserLogin(), encryptedPassword(user), user.getRole()
+        )));
     }
 
-    public UserDto update (Long id, User user) {
-        User oldUser = findById(id);
+    public UserDto update(Long id, User user) {
+
+        User oldUser = this.findById(id);
 
         oldUser.setUserEmail(user.getUserEmail());
         oldUser.setUserLogin(user.getUserLogin());
@@ -64,12 +63,13 @@ public class UserService {
         return new UserDto(userRepository.save(oldUser));
     }
 
-    public void delete (Long id) {
+    public void delete(Long id) {
 
         userRepository.deleteById(id);
     }
 
     private User findByUserName(User user) {
+
         User userValidation = userRepository.findByUserName(user.getUserName());
 
         if (userValidation != null) {
@@ -79,6 +79,7 @@ public class UserService {
     }
 
     private User findByUserEmail(User user) {
+
         User userValidation = userRepository.findByUserEmail(user.getUserEmail());
 
         if (userValidation != null) {
@@ -88,11 +89,17 @@ public class UserService {
     }
 
     private User findByUserLogin(User user) {
+
         UserDetails userValidation = userRepository.findByUserLogin(user.getUserLogin());
 
         if (userValidation != null) {
             return user;
         }
         return null;
+    }
+
+    public String encryptedPassword(User user) {
+
+        return new BCryptPasswordEncoder().encode(user.getPassword());
     }
 }

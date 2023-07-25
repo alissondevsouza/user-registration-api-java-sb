@@ -6,14 +6,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+
 
 @Entity
-@Table( name = "tb_user")
+@Table(name = "tb_user")
 public class User implements UserDetails {
 
     @Id
@@ -28,6 +26,7 @@ public class User implements UserDetails {
     public User() {
 
     }
+
     public User(Long id, String userName, String userEmail, String userLogin, String userPassword, UserRole role) {
         this.id = id;
         this.userName = userName;
@@ -38,10 +37,12 @@ public class User implements UserDetails {
     }
 
     public UserRole getRole() {
+
         return role;
     }
 
     public void setRole(UserRole role) {
+
         this.role = role;
     }
 
@@ -126,10 +127,9 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        // Define as permissões que o usuário ADMIN tera -> permissões de admin e de user
-        if(this.role == UserRole.ADMIN){
+        if (this.role == UserRole.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }else{
+        } else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }
