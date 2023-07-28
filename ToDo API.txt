@@ -1,8 +1,0 @@
-Proximas Implementações:
-
-- Exceções
-- Readme
-- Actuator
-- Swager
-- JWT
-- Profiles
