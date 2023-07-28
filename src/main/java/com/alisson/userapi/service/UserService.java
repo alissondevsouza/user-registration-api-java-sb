@@ -1,17 +1,18 @@
 package com.alisson.userapi.service;
 
-import com.alisson.userapi.repository.UserRepository;
 import com.alisson.userapi.domain.Dtos.UserDto;
 import com.alisson.userapi.domain.entity.User;
-import org.hibernate.ObjectNotFoundException;
+import com.alisson.userapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -19,53 +20,101 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User findById(Long id) {
+    public ResponseEntity<Object> findById(Long id) {
 
-        Optional<User> user = userRepository.findById(id);
-
-        return user.orElseThrow(() -> new ObjectNotFoundException(
-                "User " + id + " not found! Id: ", user));
+        try {
+            Optional<User> user = userRepository.findById(id);
+            return user.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(new UserDto(value)))
+                    .orElseGet(() -> ResponseEntity.status(404).body("Error: User ID " + id + " not found!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    public List<User> findAll() {
+    public ResponseEntity<Object> findAll() {
 
-        return userRepository.findAll();
+        try {
+            List<User> users = userRepository.findAll();
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Users not found!");
+            }
+            return ResponseEntity.ok().body(users.stream().map(UserDto::new).collect(Collectors.toList()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    public UserDto create(User user) {
+    public ResponseEntity<Object> create(User user) {
 
         if (findByUserName(user) != null) {
-            throw new DataIntegrityViolationException("UserName already registered!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Username already registered!");
         }
 
         if (findByUserEmail(user) != null) {
-            throw new DataIntegrityViolationException("Email already registered!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: UserEmail already registered!");
         }
 
         if (findByUserLogin(user) != null) {
-            throw new DataIntegrityViolationException("UserLogin already registered");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: UserLogin already registered!");
         }
 
-        return new UserDto(userRepository.save(new User(
-                null, user.getUserName(), user.getUserEmail(), user.getUserLogin(), encryptedPassword(user), user.getRole()
-        )));
+        try {
+            User newUser = userRepository.save(new User(
+                    null, user.getUserName(), user.getUserEmail(), user.getUserLogin(), encryptedPassword(user), user.getRole()
+            ));
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("User ID " + newUser.getId() + " registered successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    public UserDto update(Long id, User user) {
+    public ResponseEntity<Object> update(Long id, User user) {
 
-        User oldUser = this.findById(id);
+        try {
+            if (findByUserName(user) != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Username already registered!");
+            }
 
-        oldUser.setUserEmail(user.getUserEmail());
-        oldUser.setUserLogin(user.getUserLogin());
-        oldUser.setUserName(user.getUserName());
-        oldUser.setUserPassword(user.getUserPassword());
+            if (findByUserEmail(user) != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: UserEmail already registered!");
+            }
 
-        return new UserDto(userRepository.save(oldUser));
+            if (findByUserLogin(user) != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: UserLogin already registered!");
+            }
+
+            User oldUser = userRepository.findByIdNoOptional(id);
+
+            oldUser.setUserName(user.getUserName());
+            oldUser.setUserEmail(user.getUserEmail());
+            oldUser.setUserLogin(user.getUserLogin());
+            oldUser.setUserPassword(encryptedPassword(user));
+            oldUser.setRole(user.getRole());
+
+            userRepository.save(oldUser);
+
+            return ResponseEntity.ok().body("User ID " + id + " updated successfully!");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    public void delete(Long id) {
+    public ResponseEntity<Object> delete(Long id) {
 
-        userRepository.deleteById(id);
+        try {
+            if (userRepository.findByIdNoOptional(id) == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User ID " + id + " not found!");
+            }
+
+            userRepository.deleteById(id);
+
+            return ResponseEntity.status(HttpStatus.OK).body("User ID " + id + " deleted successfully!");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     private User findByUserName(User user) {

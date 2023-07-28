@@ -14,7 +14,7 @@ public class AuthenticationService {
     @Autowired
     private TokenService tokenService;
 
-    public String login (AuthenticationDto authenticationDto) {
+    public String login(AuthenticationDto authenticationDto) {
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDto.userLogin(), authenticationDto.userPassword());
         var auth = this.authenticationManager.authenticate(usernamePassword);

@@ -1,15 +1,10 @@
 package com.alisson.userapi.controller;
 
-import com.alisson.userapi.service.UserService;
-import com.alisson.userapi.domain.Dtos.UserDto;
 import com.alisson.userapi.domain.entity.User;
+import com.alisson.userapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -19,39 +14,33 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDto> finById(@PathVariable Long id) {
+    @GetMapping(value = "/id")
+    public ResponseEntity<Object> finById(@RequestParam Long id) throws RuntimeException {
 
-        return ResponseEntity.ok().body(new UserDto(userService.findById(id)));
+        return userService.findById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> findAll() {
+    public ResponseEntity<Object> findAll() {
 
-        return ResponseEntity.ok().body(userService.findAll().stream().map(UserDto::new).collect(Collectors.toList()));
+        return userService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody User user) {
+    public ResponseEntity<Object> create(@RequestBody User user) {
 
-        return ResponseEntity.created(ServletUriComponentsBuilder
-                        .fromCurrentRequest().path("/{id}")
-                        .buildAndExpand(userService.create(user).getId())
-                        .toUri())
-                .build();
+        return userService.create(user);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody User user) {
+    @PutMapping(value = "/update")
+    public ResponseEntity<Object> update(@RequestParam Long id, @RequestBody User user) {
 
-        return ResponseEntity.ok().body(userService.update(id, user));
+        return userService.update(id, user);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<Object> delete(@RequestParam Long id) {
 
-        userService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        return userService.delete(id);
     }
 }
