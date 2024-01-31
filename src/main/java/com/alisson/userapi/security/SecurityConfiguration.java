@@ -27,8 +27,11 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/users").permitAll() //Usar para criar primeiro Usuário
+                        .requestMatchers(HttpMethod.POST, "/authentication/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll() //Usar para criar primeiro Usuário
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{id}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/update").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

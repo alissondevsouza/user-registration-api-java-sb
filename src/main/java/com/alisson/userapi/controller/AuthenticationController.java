@@ -1,9 +1,10 @@
 package com.alisson.userapi.controller;
 
-import com.alisson.userapi.domain.Dtos.AuthenticationDto;
-import com.alisson.userapi.domain.Dtos.LoginResponseDto;
+import com.alisson.userapi.domain.auth.AuthenticationDTO;
+import com.alisson.userapi.domain.auth.LoginResponseDTO;
 import com.alisson.userapi.service.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,15 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/authentication")
 public class AuthenticationController {
-
-    @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) {
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
-        return ResponseEntity.ok(new LoginResponseDto(authenticationService.login(authenticationDto)));
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody AuthenticationDTO authenticationDto) {
+
+        var token = authenticationService.login(authenticationDto);
+        return ResponseEntity.ok(new LoginResponseDTO(HttpStatus.OK, token));
     }
 }

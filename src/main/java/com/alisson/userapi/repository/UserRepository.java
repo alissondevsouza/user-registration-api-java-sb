@@ -1,6 +1,6 @@
 package com.alisson.userapi.repository;
 
-import com.alisson.userapi.domain.entity.User;
+import com.alisson.userapi.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

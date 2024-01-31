@@ -1,6 +1,6 @@
 package com.alisson.userapi.service;
 
-import com.alisson.userapi.domain.entity.User;
+import com.alisson.userapi.domain.user.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
