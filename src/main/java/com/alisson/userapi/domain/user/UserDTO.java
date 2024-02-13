@@ -3,9 +3,6 @@ package com.alisson.userapi.domain.user;
 import com.alisson.userapi.enums.UserRole;
 import lombok.Getter;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Getter
 public class UserDTO {
 
@@ -25,7 +22,7 @@ public class UserDTO {
         this.role = user.getRole();
     }
 
-    public UserDTO(RequestUserDTO user) {
+    public UserDTO(RequestUser user) {
         this.id = user.getId();
         this.userName = user.getUserName();
         this.userEmail = user.getUserEmail();

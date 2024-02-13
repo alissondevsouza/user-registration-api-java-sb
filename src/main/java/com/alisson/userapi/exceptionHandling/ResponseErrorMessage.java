@@ -11,5 +11,5 @@ import org.springframework.http.HttpStatus;
 public class ResponseErrorMessage {
 
     private HttpStatus status;
-    private String message;
+    private String data;
 }

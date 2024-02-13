@@ -1,7 +1,5 @@
 package com.alisson.userapi.domain.user;
 
-import com.alisson.userapi.domain.user.UserDTO;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,18 +9,23 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ResponseUserDTO {
+public class ResponseUser {
 
     private HttpStatus status;
     private Object data;
 
-    public ResponseUserDTO(HttpStatus status, UserDTO data) {
+    public ResponseUser(HttpStatus status, UserResponseDTO data) {
         this.status = status;
         this.data = data;
     }
 
-    public ResponseUserDTO(HttpStatus status, List<UserDTO> data) {
+    public ResponseUser(HttpStatus status, UserListResponseDTO data) {
         this.status = status;
         this.data = data;
+    }
+
+    public ResponseUser(HttpStatus status, String message) {
+        this.status = status;
+        this.data = message;
     }
 }

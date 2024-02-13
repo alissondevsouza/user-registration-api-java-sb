@@ -1,9 +1,6 @@
 package com.alisson.userapi.controller;
 
-import com.alisson.userapi.domain.user.RequestUserDTO;
-import com.alisson.userapi.domain.user.ResponseUserDTO;
-import com.alisson.userapi.domain.user.User;
-import com.alisson.userapi.domain.user.UserDTO;
+import com.alisson.userapi.domain.user.*;
 import com.alisson.userapi.service.UserService;
 
 import org.springframework.http.HttpStatus;
@@ -16,48 +13,53 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
     public UserController( UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseUserDTO> finById(@PathVariable("id") Long id){
+    public ResponseEntity<ResponseUser> finById(@PathVariable("id") Long userId){
 
-        UserDTO user = this.userService.findById(id);
+        UserDTO userDTO = this.userService.findById(userId);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseUserDTO(HttpStatus.OK ,user));
+                .body(new ResponseUser(HttpStatus.OK ,new UserResponseDTO(userDTO)));
     }
 
     @GetMapping
-    public ResponseEntity<ResponseUserDTO> findAll() {
+    public ResponseEntity<ResponseUser> findAll() {
 
-        List<UserDTO> users = this.userService.findAll();
+        List<UserDTO> listUserDTO = this.userService.findAll();
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseUserDTO(HttpStatus.OK ,users));
+                .body(new ResponseUser(HttpStatus.OK , new UserListResponseDTO(listUserDTO)));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseUserDTO> create(@RequestBody RequestUserDTO user) {
+    public ResponseEntity<ResponseUser> create(@RequestBody RequestUser user) {
 
         UserDTO userDTO = this.userService.create(new UserDTO(user));
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseUserDTO(HttpStatus.CREATED ,userDTO));
+                .body(new ResponseUser(HttpStatus.CREATED , new UserResponseDTO(userDTO)));
     }
 
-    @PutMapping(value = "/update")
-    public ResponseEntity<Object> update(@RequestParam Long id, @RequestBody RequestUserDTO user) {
+    @PutMapping(value = "/update/{id}")
+    public ResponseEntity<ResponseUser> update(@PathVariable("id") Long userId, @RequestBody RequestUser user) {
 
-        UserDTO userDTO = userService.update(id, new UserDTO(user));
+        UserDTO userDTO = userService.update(userId, new UserDTO(user));
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseUserDTO(HttpStatus.OK ,userDTO));
+                .body(new ResponseUser(HttpStatus.OK ,new UserResponseDTO(userDTO)));
     }
 
-    @DeleteMapping(value = "/delete")
-    public ResponseEntity<Object> delete(@RequestParam Long id) {
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<ResponseUser> delete(@PathVariable("id") Long userId) {
 
-        return userService.delete(id);
+        String responseDeleted = userService.delete(userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseUser(HttpStatus.OK , responseDeleted));
     }
 }
