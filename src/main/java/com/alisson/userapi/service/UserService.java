@@ -2,40 +2,39 @@ package com.alisson.userapi.service;
 
 import com.alisson.userapi.domain.user.UserDTO;
 import com.alisson.userapi.domain.user.User;
+import com.alisson.userapi.exceptionHandling.exceptions.MissingParameterException;
 import com.alisson.userapi.exceptionHandling.exceptions.UserNotFoundException;
 import com.alisson.userapi.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public UserDTO findById(Long id) {
+    public UserDTO findById(Long userId) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User ID " + id + " not found!"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not exist!"));
 
         return new UserDTO(user);
     }
 
     public List<UserDTO> findAll() {
 
-        List<User> users = userRepository.findAll();
+        List<User> listUsers = userRepository.findAll();
 
-        return users
+        return listUsers
                 .stream()
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
@@ -43,54 +42,105 @@ public class UserService {
 
     public UserDTO create(UserDTO userDTO) {
 
-        User user = new User(
-                userDTO.getId(),
-                userDTO.getUserName(),
-                userDTO.getUserEmail(),
-                userDTO.getUserLogin(),
-                encryptedPassword(new User(userDTO)),
-                userDTO.getRole());
+        this.isParametersNotNull(userDTO);
 
-       User newUser = userRepository.save(user);
+        User user = this.convertToEntity(userDTO);
 
-       return new UserDTO(newUser);
+        this.isUserAlreadyExist(user);
+
+        User newUser = userRepository.save(user);
+
+        return new UserDTO(newUser);
     }
 
-    public UserDTO update(Long id, UserDTO userDto) {
+    public UserDTO update(Long userId, UserDTO userDto) {
 
-        User oldUser = userRepository.findByIdNoOptional(id);
+        User userToBeUpdate = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not exist!"));
 
-        User user = new User(userDto);
+        User newUserToUpdate = new User(userDto);
 
-        oldUser.setUserName(user.getUsername());
-        oldUser.setUserEmail(user.getUserEmail());
-        oldUser.setUserLogin(user.getUserLogin());
-        oldUser.setUserPassword(encryptedPassword(user));
-        oldUser.setRole(user.getRole());
+        this.updateUserFields(userToBeUpdate, newUserToUpdate);
 
-        User responseUser = userRepository.save(oldUser);
+        User updatedUser = userRepository.save(userToBeUpdate);
 
-        return new UserDTO(responseUser);
-
+        return new UserDTO(updatedUser);
     }
 
-    public ResponseEntity<Object> delete(Long id) {
+    public String delete(Long userId) {
 
-        try {
-            if (userRepository.findByIdNoOptional(id) == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User ID " + id + " not found!");
-            }
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not exist!"));
 
-            userRepository.deleteById(id);
+        userRepository.delete(userToDelete);
 
-            return ResponseEntity.status(HttpStatus.OK).body("User ID " + id + " deleted successfully!");
+        return "User with ID " + userId + " has been successfully deleted!";
+    }
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+    public User convertToEntity(UserDTO userDTO) {
+        User user = new User();
+
+        user.setId(userDTO.getId());
+        user.setUserName(userDTO.getUserName());
+        user.setUserEmail(userDTO.getUserEmail());
+        user.setUserLogin(userDTO.getUserLogin());
+        user.setUserPassword(this.encryptedPassword(userDTO.getUserPassword()));
+        user.setRole(userDTO.getRole());
+        return user;
+    }
+
+    public void isUserAlreadyExist (User user) {
+
+        if (findByUserName(user) != null) {
+            throw new UserNotFoundException("User name " + user.getUserName() + " already exists!");
+        }
+
+        if (findByUserEmail(user) != null) {
+            throw new UserNotFoundException("User email " + user.getUserEmail() + " already exists!");
+        }
+
+        if (findByUserLogin(user) != null) {
+            throw new UserNotFoundException("User login " + user.getUserLogin() + " already exists!");
         }
     }
 
-    private UserDTO findByUserName(UserDTO user) {
+    public void isParametersNotNull(UserDTO userDTO) {
+        if (userDTO.getUserName() == null || userDTO.getUserName().isEmpty()) {
+            throw new MissingParameterException("User name is required!");
+        }
+        if(userDTO.getUserEmail() == null || userDTO.getUserEmail().isEmpty()) {
+            throw new MissingParameterException("User email is required!");
+        }
+        if(userDTO.getUserLogin() == null || userDTO.getUserLogin().isEmpty()) {
+            throw new MissingParameterException("User login is required!");
+        }
+        if(userDTO.getUserPassword() == null || userDTO.getUserPassword().isEmpty()) {
+            throw new MissingParameterException("User password is required!");
+        }
+        if(userDTO.getRole() == null || userDTO.getRole().toString().isEmpty()) {
+            throw new MissingParameterException("User role is required!");
+        }
+    }
+
+    private void updateUserFields(User userToBeUpdate, User newUserToUpdate) {
+        if (newUserToUpdate.getUserName() != null && !newUserToUpdate.getUserName().isEmpty()) {
+            userToBeUpdate.setUserName(newUserToUpdate.getUserName());
+        }
+        if (newUserToUpdate.getUserEmail() != null && !newUserToUpdate.getUserEmail().isEmpty()) {
+            userToBeUpdate.setUserEmail(newUserToUpdate.getUserEmail());
+        }
+        if (newUserToUpdate.getUserLogin() != null && !newUserToUpdate.getUserLogin().isEmpty()) {
+            userToBeUpdate.setUserLogin(newUserToUpdate.getUserLogin());
+        }
+        if (newUserToUpdate.getUserPassword() != null && !newUserToUpdate.getUserPassword().isEmpty()) {
+            userToBeUpdate.setUserPassword(encryptedPassword(newUserToUpdate.getUserPassword()));
+        }
+        if (newUserToUpdate.getRole() != null && !newUserToUpdate.getRole().toString().isEmpty()){
+            userToBeUpdate.setRole(newUserToUpdate.getRole());
+        }
+    }
+
+    private User findByUserName(User user) {
 
         User userValidation = userRepository.findByUserName(user.getUserName());
 
@@ -100,7 +150,7 @@ public class UserService {
         return null;
     }
 
-    private UserDTO findByUserEmail(UserDTO user) {
+    private User findByUserEmail(User user) {
 
         User userValidation = userRepository.findByUserEmail(user.getUserEmail());
 
@@ -110,7 +160,7 @@ public class UserService {
         return null;
     }
 
-    private UserDTO findByUserLogin(UserDTO user) {
+    private User findByUserLogin(User user) {
 
         UserDetails userValidation = userRepository.findByUserLogin(user.getUserLogin());
 
@@ -120,8 +170,8 @@ public class UserService {
         return null;
     }
 
-    public String encryptedPassword(User user) {
+    public String encryptedPassword(String userPassword) {
 
-        return new BCryptPasswordEncoder().encode(user.getPassword());
+        return new BCryptPasswordEncoder().encode(userPassword);
     }
 }
