@@ -31,7 +31,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll() //Usar para criar primeiro Usuário
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/users/update").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/update/{id}").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/delete/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
