@@ -1,4 +1,4 @@
-package com.alisson.userapi.domain.user;
+package com.alisson.userapi.domain.user.dto;
 
 import com.alisson.userapi.enums.UserRole;
 import lombok.Getter;

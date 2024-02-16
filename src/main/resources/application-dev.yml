@@ -18,5 +18,5 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-jwtToken:
+jwt-token:
   secret: sra-secret-key

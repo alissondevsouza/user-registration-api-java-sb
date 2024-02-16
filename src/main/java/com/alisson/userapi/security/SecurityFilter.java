@@ -1,7 +1,7 @@
 package com.alisson.userapi.security;
 
 import com.alisson.userapi.repository.UserRepository;
-import com.alisson.userapi.service.TokenService;
+import com.alisson.userapi.service.impl.TokenServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
-    TokenService tokenService;
+    TokenServiceImpl tokenServiceImpl;
     @Autowired
     UserRepository userRepository;
 
@@ -28,7 +28,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         var token = this.recoverToken(request);
         if (token != null) {
-            var login = tokenService.validateToken(token);
+            var login = tokenServiceImpl.validateToken(token);
             UserDetails user = userRepository.findByUserLogin(login);
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

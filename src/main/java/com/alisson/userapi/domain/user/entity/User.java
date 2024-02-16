@@ -1,5 +1,6 @@
-package com.alisson.userapi.domain.user;
+package com.alisson.userapi.domain.user.entity;
 
+import com.alisson.userapi.domain.user.dto.UserDTO;
 import com.alisson.userapi.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;

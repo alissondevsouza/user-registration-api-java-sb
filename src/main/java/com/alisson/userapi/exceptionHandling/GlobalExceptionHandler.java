@@ -13,35 +13,35 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    private ResponseEntity<ResponseErrorMessage> runtimeErrorHandler(RuntimeException exception) {
+    private ResponseEntity<ResponseExceptionMessage> runtimeErrorHandler(RuntimeException exception) {
 
-        ResponseErrorMessage responseErrorMessage =
-                new ResponseErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseErrorMessage);
+        ResponseExceptionMessage responseExceptionMessage =
+                new ResponseExceptionMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseExceptionMessage);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<ResponseErrorMessage> userNotFoundErrorHandler(UserNotFoundException exception) {
+    private ResponseEntity<ResponseExceptionMessage> userNotFoundErrorHandler(UserNotFoundException exception) {
 
-        ResponseErrorMessage responseErrorMessage =
-                new ResponseErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseErrorMessage);
+        ResponseExceptionMessage responseExceptionMessage =
+                new ResponseExceptionMessage(HttpStatus.NOT_FOUND, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseExceptionMessage);
     }
 
     @ExceptionHandler(MissingParameterException.class)
-    private ResponseEntity<ResponseErrorMessage> userNotFoundErrorHandler(MissingParameterException exception) {
+    private ResponseEntity<ResponseExceptionMessage> userNotFoundErrorHandler(MissingParameterException exception) {
 
-        ResponseErrorMessage responseErrorMessage =
-                new ResponseErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseErrorMessage);
+        ResponseExceptionMessage responseExceptionMessage =
+                new ResponseExceptionMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseExceptionMessage);
     }
 
     @ExceptionHandler(LoginNotFoundException.class)
-    private ResponseEntity<ResponseErrorMessage> loginNotFoundErrorHandler(LoginNotFoundException exception) {
+    private ResponseEntity<ResponseExceptionMessage> loginNotFoundErrorHandler(LoginNotFoundException exception) {
 
-        ResponseErrorMessage responseErrorMessage =
-                new ResponseErrorMessage(HttpStatus.UNAUTHORIZED, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseErrorMessage);
+        ResponseExceptionMessage responseExceptionMessage =
+                new ResponseExceptionMessage(HttpStatus.UNAUTHORIZED, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseExceptionMessage);
     }
 
 
