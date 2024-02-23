@@ -4,12 +4,12 @@ Este projeto é uma API para Gerenciamento de Usuários construída em Java 17. 
 atualizações e exclusões de usuários. Alêm disso, ela conta com com autenticaçã de usuário e tambem com testes unitários.
 
 ## Indice
-- [Tecnologias Utilizadas](#Tecnologias Utilizadas)
-- [Funcionalidades Principais](#Funcionalidades Principais)
+- [Tecnologias](#Tecnologias Utilizadas)
+- [Funcionalidades](#Funcionalidades Principais)
 - [Instalação](#Instalação)
 - [Execução](#Execução)
-- [Endpoints da API](#Endpoints da API)
-- [Como Contribuir para o Projeto](#Como Contribuir para o Projeto)
+- [Endpoints](#Endpoints da API)
+- [Contribuir](#Como Contribuir para o Projeto)
 
 ## Tecnologias Utilizadas
 - <strong>Spring Boot:</strong> Framework que facilita a criação de aplicativos Java baseados em Spring.
