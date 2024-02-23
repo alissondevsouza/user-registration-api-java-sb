@@ -1,6 +1,7 @@
 package com.alisson.userapi.service;
 
 import com.alisson.userapi.domain.user.dto.UserDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

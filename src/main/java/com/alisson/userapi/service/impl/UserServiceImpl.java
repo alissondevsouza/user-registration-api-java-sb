@@ -3,10 +3,12 @@ package com.alisson.userapi.service.impl;
 import com.alisson.userapi.domain.user.dto.UserDTO;
 import com.alisson.userapi.domain.user.entity.User;
 import com.alisson.userapi.exceptionHandling.exceptions.MissingParameterException;
+import com.alisson.userapi.exceptionHandling.exceptions.UserAlreadyExistException;
 import com.alisson.userapi.exceptionHandling.exceptions.UserNotFoundException;
 import com.alisson.userapi.repository.UserRepository;
 
 import com.alisson.userapi.service.UserService;
+import com.alisson.userapi.utils.UserUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,9 +20,11 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserUtil userUtil;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserUtil userUtil){
         this.userRepository = userRepository;
+        this.userUtil = userUtil;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO create(UserDTO userDTO) {
 
-        this.isParametersNotNull(userDTO);
+        this.userUtil.isParametersNotNull(userDTO);
 
         User user = this.convertToEntity(userDTO);
 
@@ -98,33 +102,15 @@ public class UserServiceImpl implements UserService {
     private void isUserAlreadyExist (User user) {
 
         if (findByUserName(user) != null) {
-            throw new UserNotFoundException("User name " + user.getUserName() + " already exists!");
+            throw new UserAlreadyExistException("User name " + user.getUserName() + " already exists!");
         }
 
         if (findByUserEmail(user) != null) {
-            throw new UserNotFoundException("User email " + user.getUserEmail() + " already exists!");
+            throw new UserAlreadyExistException("User email " + user.getUserEmail() + " already exists!");
         }
 
         if (findByUserLogin(user) != null) {
-            throw new UserNotFoundException("User login " + user.getUserLogin() + " already exists!");
-        }
-    }
-
-    private void isParametersNotNull(UserDTO userDTO) {
-        if (userDTO.getUserName() == null || userDTO.getUserName().isEmpty()) {
-            throw new MissingParameterException("User name is required!");
-        }
-        if(userDTO.getUserEmail() == null || userDTO.getUserEmail().isEmpty()) {
-            throw new MissingParameterException("User email is required!");
-        }
-        if(userDTO.getUserLogin() == null || userDTO.getUserLogin().isEmpty()) {
-            throw new MissingParameterException("User login is required!");
-        }
-        if(userDTO.getUserPassword() == null || userDTO.getUserPassword().isEmpty()) {
-            throw new MissingParameterException("User password is required!");
-        }
-        if(userDTO.getRole() == null || userDTO.getRole().toString().isEmpty()) {
-            throw new MissingParameterException("User role is required!");
+            throw new UserAlreadyExistException("User login " + user.getUserLogin() + " already exists!");
         }
     }
 
