@@ -2,15 +2,20 @@ package com.alisson.userapi.security;
 
 import com.alisson.userapi.repository.UserRepository;
 import com.alisson.userapi.service.impl.TokenServiceImpl;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.lang.NonNull;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Component;
+
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,20 +23,28 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    TokenServiceImpl tokenServiceImpl;
-    @Autowired
-    UserRepository userRepository;
+    private final TokenServiceImpl tokenServiceImpl;
+    private final UserRepository userRepository;
+
+    public SecurityFilter(TokenServiceImpl tokenServiceImpl, UserRepository userRepository) {
+        this.tokenServiceImpl = tokenServiceImpl;
+        this.userRepository = userRepository;
+    }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
 
         var token = this.recoverToken(request);
         if (token != null) {
             var login = tokenServiceImpl.validateToken(token);
             UserDetails user = userRepository.findByUserLogin(login);
 
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            var authentication =
+                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
@@ -42,7 +55,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (authHeader == null) {
             return null;
         }
-
         return authHeader.replace("Bearer ", "");
     }
 }

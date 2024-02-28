@@ -1,7 +1,7 @@
 # API para Gerenciamento de Usuários
 
 Este projeto é uma API para Gerenciamento de Usuários construída em Java 17. Esta API viabiliza consultas, cadastros, 
-atualizações e exclusões de usuários. Alêm disso, ela conta com com autenticaçã de usuário e tambem com testes unitários.
+atualizações e exclusões de usuários. Alêm disso, ela conta com com autenticação de usuário e tambem com testes unitários.
 
 ## Indice
 - [Tecnologias](#tecnologias-utilizadas)
@@ -20,6 +20,7 @@ atualizações e exclusões de usuários. Alêm disso, ela conta com com autenti
 - <strong>H2 Database:</strong> Banco de dados em memória utilizado para testes.
 - <strong>JUnit:</strong> Framework para escrever testes automatizados em Java.
 - <strong>Mockito:</strong> Biblioteca de mocking popular para testes unitários em Java.
+- <strong>Flyway:</strong> Ferramenta de migração de banco de dados para versionamento e aplicação de scripts.
 
 ## Funcionalidades Principais
 - <strong>Cadastro de Usuários:</strong> A API permite o cadastro de novos usuários.
@@ -48,6 +49,11 @@ docker-compose up -d
 ```
 3. Execute a aplicação:
 4. Acesse a aplicação em http://localhost:9080
+5. Usuario padrão para primeiro acesso (authentication/login):
+```bash
+  userLogin: admin
+  userPassword: admin1234
+```
 
 ## Endpoints da API
 A API oferece os seguintes endpoints:

@@ -2,7 +2,9 @@ package com.alisson.userapi.domain.user.dto;
 
 import com.alisson.userapi.domain.user.RequestUser;
 import com.alisson.userapi.domain.user.entity.User;
+
 import com.alisson.userapi.enums.UserRole;
+
 import lombok.Getter;
 
 @Getter

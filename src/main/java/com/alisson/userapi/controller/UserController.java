@@ -4,10 +4,12 @@ import com.alisson.userapi.domain.user.*;
 import com.alisson.userapi.domain.user.dto.UserDTO;
 import com.alisson.userapi.domain.user.dto.UserListResponseDTO;
 import com.alisson.userapi.domain.user.dto.UserResponseDTO;
+
 import com.alisson.userapi.service.impl.UserServiceImpl;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

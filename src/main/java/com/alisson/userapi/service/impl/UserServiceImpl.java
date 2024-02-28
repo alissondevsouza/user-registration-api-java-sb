@@ -2,15 +2,19 @@ package com.alisson.userapi.service.impl;
 
 import com.alisson.userapi.domain.user.dto.UserDTO;
 import com.alisson.userapi.domain.user.entity.User;
-import com.alisson.userapi.exceptionHandling.exceptions.MissingParameterException;
+
 import com.alisson.userapi.exceptionHandling.exceptions.UserAlreadyExistException;
 import com.alisson.userapi.exceptionHandling.exceptions.UserNotFoundException;
+
 import com.alisson.userapi.repository.UserRepository;
 
 import com.alisson.userapi.service.UserService;
 import com.alisson.userapi.utils.UserUtil;
+
 import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

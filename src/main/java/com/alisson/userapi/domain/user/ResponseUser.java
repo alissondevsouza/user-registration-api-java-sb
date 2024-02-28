@@ -2,6 +2,7 @@ package com.alisson.userapi.domain.user;
 
 import com.alisson.userapi.domain.user.dto.UserListResponseDTO;
 import com.alisson.userapi.domain.user.dto.UserResponseDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 

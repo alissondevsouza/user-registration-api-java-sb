@@ -1,0 +1,2 @@
+INSERT INTO public.tb_user (id, user_name, user_email, user_login, user_password, role)
+VALUES (nextval('tb_user_seq'), 'Admin', 'admin@example.com', 'admin', '$2a$10$YmLfguqNk4u8GGn15n5.ouQUsSk0Tc5YdHrFOHI9DYESUaXKOWZwa', 1);
